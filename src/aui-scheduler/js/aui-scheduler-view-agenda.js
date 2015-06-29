@@ -509,28 +509,38 @@ var SchedulerAgendaView = A.Component.create({
                 scheduler = instance.get(SCHEDULER),
 
                 viewDate = DateMath.toMidnight(scheduler.get(VIEW_DATE)),
+                viewDates = [],
 
                 eventsMap = {};
+
+            for (var i = 0; i < 7; i++) {
+                viewDates.push(DateMath.add(viewDate, DateMath.DAY, i));
+            }
 
             scheduler.eachEvent(
                 function(schedulerEvent) {
                     var startDate = schedulerEvent.get(START_DATE),
+                        endDate = schedulerEvent.get(END_DATE),
                         visible = schedulerEvent.get(VISIBLE),
                         dayTS;
 
-                    if (!visible ||
-                        (startDate.getTime() < viewDate.getTime())) {
-
+                    if (!visible) {
                         return;
                     }
 
-                    dayTS = DateMath.safeClearTime(startDate).getTime();
+                    for (var i = 0; i < viewDates.length; i++) {
+                        var displayDate = viewDates[i];
 
-                    if (!eventsMap[dayTS]) {
-                        eventsMap[dayTS] = [];
+                        if ((displayDate.getTime() >= startDate.getTime()) && (displayDate.getTime() <= endDate.getTime())) {
+                            dayTS = DateMath.safeClearTime(displayDate).getTime();
+
+                            if (!eventsMap[dayTS]) {
+                                eventsMap[dayTS] = [];
+                            }
+
+                            eventsMap[dayTS].push(schedulerEvent);
+                        }
                     }
-
-                    eventsMap[dayTS].push(schedulerEvent);
                 }
             );
 
