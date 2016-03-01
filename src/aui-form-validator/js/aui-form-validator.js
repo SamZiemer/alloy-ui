@@ -124,8 +124,6 @@ YUI.AUI.defaults.FormValidator = {
 			if (isString(ruleValue)) {
 				var extensions = ruleValue.replace(/\./g, '').split(/,\s*|\b\s*/);
 
-				extensions = A.Array.map(extensions, A.Escape.regex);
-
 				regex = getRegExp('[.](' + extensions.join(_PIPE) + ')$', 'i');
 			}
 
